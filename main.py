@@ -44,12 +44,13 @@ def main():
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser() #this is a built in python class
     parser.add_argument("--epochs", type=int, default=constants.EPOCHS)
     parser.add_argument("--batch_size", type=int, default=constants.BATCH_SIZE)
     parser.add_argument(
         "--n_eval", type=int, default=constants.N_EVAL,
     )
+    parser.add_argument("--learning_rate", type=float, default=constants.BATCH_SIZE)
     return parser.parse_args()
 
 
