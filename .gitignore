@@ -1,4 +1,6 @@
 __pycache__
 .vscode
 
-training_summaries
+training_summaries/
+data/
+.pandas-practice.ipynb

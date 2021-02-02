@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.tensorboard
+import tensorboard as tf 
+import datetime 
 
 
 def starting_train(
@@ -53,6 +55,7 @@ def starting_train(
                 # Compute training loss and accuracy.
                 # Log the results to Tensorboard.
 
+                
                 # TODO:
                 # Compute validation loss and accuracy.
                 # Log the results to Tensorboard.

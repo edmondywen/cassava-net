@@ -15,6 +15,7 @@ class ConvNetwork(torch.nn.Module):
         x = self.flatten(x)
         x = self.fc1(x)
         x = self.sigmoid(x) 
+        return x
 
 class StartingNetwork(torch.nn.Module):
     """
