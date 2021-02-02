@@ -4,8 +4,8 @@ import time
 
 
 import constants
-from datasets.StartingDataset import StartingDataset
-from networks.StartingNetwork import StartingNetwork
+from datasets.CNNDataset import StartingDataset
+from networks.ConvNetwork import ConvNetwork
 from train_functions.starting_train import starting_train
 
 
@@ -32,7 +32,7 @@ def main():
     # Initalize dataset and model. Then train the model!
     train_dataset = StartingDataset()
     val_dataset = StartingDataset()
-    model = StartingNetwork()
+    model = ConvNetwork()
     starting_train(
         train_dataset=train_dataset,
         val_dataset=val_dataset,
