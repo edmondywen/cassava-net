@@ -4,7 +4,7 @@ import time
 
 
 import constants
-from datasets.CNNDataset import StartingDataset
+from datasets.CNNDataset import CNNDataset
 from networks.ConvNetwork import ConvNetwork
 from train_functions.starting_train import starting_train
 
@@ -30,8 +30,8 @@ def main():
     print("Batch size:", args.batch_size)
 
     # Initalize dataset and model. Then train the model!
-    train_dataset = StartingDataset()
-    val_dataset = StartingDataset()
+    train_dataset = CNNDataset()
+    val_dataset = CNNDataset(isTrain = False)
     model = ConvNetwork()
     starting_train(
         train_dataset=train_dataset,
