@@ -3,10 +3,8 @@ import pandas as pd
 import sklearn
 from PIL import Image
 
+#code seems to be stuck in an infinite loop of some sort? isn't printing out anything
 class CNNDataset(torch.utils.data.Dataset):
-    """
-    Dataset that contains 100000 3x224x224 black images (all zeros).
-    """
 
     # 800 x 600 - you want to reduce the image resolution using pytorch (transform) or pillow
     # need some way to load image into a tensor 
@@ -20,17 +18,21 @@ class CNNDataset(torch.utils.data.Dataset):
 
         #sklearn.model_selection.train_test_split(df, test_size = testProp, train_size = trainProp, shuffle = True) prob not needed
 
-        if (isTrain): #note: can remove colon - python will fill in start or end index
-            self.inputImages = df.iloc[0 : int(numImages * trainProp), 'image_id'] #get the entire first column.
-            self.truthLabels = df.iloc[ : int(numImages * trainProp), 'label'] #get the second column
+        if (isTrain): #note: can remove colon - python will fill in start or end index. not in this case though?
+            self.inputImages = df.iloc[0 : int(numImages * trainProp)]
+            self.inputImages = self.inputImages['image_id'] #get the entire first column.
+            self.truthLabels = df.iloc[0 : int(numImages * trainProp)] 
+            self.truthLabels = self.truthLabels['label'] #get the second column
         else: 
-            self.inputImages = df.iloc[int(numImages * trainProp): numImages, 'image_id']
-            self.truthLabels = df.iloc[int(numImages * trainProp): , 'label'] 
+            self.inputImages = df.iloc[int(numImages * trainProp): numImages]
+            self.inputImages = self.inputImages['image_id']
+            self.truthLabels = df.iloc[int(numImages * trainProp): numImages]
+            self.truthLabels = self.truthLabels['label']
 
     def __getitem__(self, index): #allows you to access with square brackets
         #inputs = torch.zeros([3, 224, 224])
         #cache images potentially? 
-        input = Image.open(self.inputImages[index])
+        input = Image.open("data/train_images/" + self.inputImages[index]) #remove hard code directory
         input = input.resize((224, 224)) #use center crop after if you want the whole image. consider for future
         label = self.truthLabels[index]
         return (input, label)
