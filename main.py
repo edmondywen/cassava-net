@@ -32,7 +32,7 @@ def main():
     # Initalize dataset and model. Then train the model!
     train_dataset = CNNDataset()
     val_dataset = CNNDataset(isTrain = False)
-    model = ConvNetwork()
+    model = ConvNetwork(3, 10) #change second arg, output_dim
     starting_train(
         train_dataset=train_dataset,
         val_dataset=val_dataset,

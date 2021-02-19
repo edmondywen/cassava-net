@@ -3,19 +3,48 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class ConvNetwork(torch.nn.Module):
-    def __init__(self):
-        self.fc1 = torch.linear()
-        self.fc2 = torch.linear()
-        self.relu = torch.relu
-        self.conv1 = torch.Conv2d(3, ) #technically a member variable. you can call objects like functions tho. 
-        self.conv2 = torch.Conv2d()
-        self.pool = torch.maxpool()
+    def __init__(self, input_channels, output_dim):
+        #super(ConvNet, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(1, 32, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)) #stride 2 padding 0 to reduce image size by factor of 2. default padding is 0
+        #image is now reduced to 112x112
 
+        self.layer2 = nn.Sequential(
+            nn.Conv2d(32, 64, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)
+        )
+        #image is now 56x56
+
+        self.fc1 = nn.Linear(56 * 56 * 64, 1000)
+        self.fc2 = nn.Linear(1000, 5) 
+
+        '''
+        self.fc1 = torch.nn.Linear() #in feature = out of prev
+        self.fc2 = torch.nn.Linear()
+        self.relu = torch.relu
+        self.conv1 = torch.Conv2d(input_channels, 5, kernel_size=4, stride=1, padding=0) #technically a member variable. you can call objects like functions tho. 
+        self.conv2 = torch.Conv2d(32, 5, kernel_size=4, stride=1, padding=0) #input_channels usually go from 3 -> 32 -> 64 -> 128 and shrinking image to compensate ie w/ pooling or with increasing stride (skipping over pixels)
+        self.pool = torch.maxpool()
+        '''
+
+        #conv2d args are inputchannels (3 for rgb), outchannels. trying 5 and let's see what happens
         # self.resnet = torch.hub.load('pytorch/vision', 'resnet18', pretrained=True)
         # self.resnet = self.resnet[:-1] #cut off last layer. fix syntax
         # self.resnet.eval()
     
+    #overrides the base function's forward 
     def forward(self, x):
+        out = self.layer1(x)
+        out = self.layer2(out)
+        out = out.reshape(out.size(0), -1) #flatten
+        out = self.fc1(out)
+        out = self.fc2(out)
+        return out 
+        
+        '''
         x = self.conv1(x)
         x = self.pool(x)
         x = self.conv2(x)
@@ -23,6 +52,7 @@ class ConvNetwork(torch.nn.Module):
         x = self.fc1(x)
         x = self.pool(x)
         x = self.fc2(x)
+        '''
 
         # transfer learning - comment out above to implement
         # with torch.no_grad():
@@ -37,33 +67,3 @@ class ConvNetwork(torch.nn.Module):
 
         return(x)
 
-class StartingNetwork(torch.nn.Module):
-    """
-    Basic logistic regression on 224x224x3 images.
-    """
-
-    def __init__(self):
-        super().__init__()
-        # self.flatten = nn.Flatten()
-        # self.fc1 = nn.Linear(224 * 224 * 3, 1)
-        # self.fc2 = nn.Linear(100, 1)
-        # self.sigmoid = nn.Sigmoid()
-
-
-    def forward(self, x):
-        # x = self.flatten(x)
-        # x = self.fc1(x)
-        # x = F.relu(x)
-        # x = self.fx2(x)
-        # x = self.sigmoid(x)
-
-        return x
-
-'''
-transfer learning
-
---don't have a lot of data
---there's already a model out there that has been trained on some data previously 
-    -resnet trained on imagenet. classify between trucks, cars, birds, etc
---what we want is to classify cassava leaf disease types:
-'''
