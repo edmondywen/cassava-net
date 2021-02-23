@@ -4,9 +4,9 @@ import torch.nn.functional as F
 
 class ConvNetwork(torch.nn.Module):
     def __init__(self, input_channels, output_dim):
-        #super(ConvNet, self).__init__()
+        super().__init__() #apparently equiv to using an initializer list
         self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=5, stride=1, padding=2),
+            nn.Conv2d(3, 32, kernel_size=5, stride=1, padding=2),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2)) #stride 2 padding 0 to reduce image size by factor of 2. default padding is 0
         #image is now reduced to 112x112
@@ -43,7 +43,7 @@ class ConvNetwork(torch.nn.Module):
         out = self.fc1(out)
         out = self.fc2(out)
         return out 
-        
+
         '''
         x = self.conv1(x)
         x = self.pool(x)

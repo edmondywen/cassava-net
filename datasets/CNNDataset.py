@@ -1,4 +1,5 @@
 import torch
+import torchvision.transforms as transforms 
 import pandas as pd 
 import sklearn
 from PIL import Image
@@ -32,9 +33,17 @@ class CNNDataset(torch.utils.data.Dataset):
     def __getitem__(self, index): #allows you to access with square brackets
         #inputs = torch.zeros([3, 224, 224])
         #cache images potentially? 
-        input = Image.open("data/train_images/" + self.inputImages[index]) #remove hard code directory
-        input = input.resize((224, 224)) #use center crop after if you want the whole image. consider for future
-        label = self.truthLabels[index]
+        input = Image.open("data/train_images/" + self.inputImages.iloc[index]) #remove hard code directory
+        process = transforms.Compose([
+            transforms.Resize((224,224)),
+            transforms.ToTensor(),
+            ])
+        input = process(input) #use center crop after if you want the whole image. consider for future
+        label = self.truthLabels.iloc[index]
+        #label = self.truthLabels[index] - 
+        #the row "label" gets cut off when doing the split above, so label "0" does not exist, but row 0 DOES exist, so you have to use iloc
+        #loc is used by default 
+    
         return (input, label)
 
     def __len__(self): #redefines length

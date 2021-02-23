@@ -24,13 +24,14 @@ def starting_train(
     # Get keyword arguments
     batch_size, epochs = hyperparameters["batch_size"], hyperparameters["epochs"]
 
-    # Initialize dataloaders
+    # Initialize dataloaders - creates a "list of batches" (sort of)
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=batch_size, shuffle=True
     )
     val_loader = torch.utils.data.DataLoader(
         val_dataset, batch_size=batch_size, shuffle=True
     )
+
 
     # Initalize optimizer (for gradient descent) and loss function
     optimizer = optim.Adam(model.parameters())
@@ -47,24 +48,33 @@ def starting_train(
         for i, batch in enumerate(train_loader):
             print(f"\rIteration {i + 1} of {len(train_loader)} ...", end="")
 
-            # TODO: Backpropagation and gradient descent
+            # Backpropagation and gradient descent
+            input_data, labels = batch
+            predictions = model.forward(input_data)
+            loss = loss_fn(predictions, labels)
+
+            loss.backward()
+            optimizer.step()
 
             # Periodically evaluate our model + log to Tensorboard
             if step % n_eval == 0:
                 # TODO:
                 # Compute training loss and accuracy.
                 # Log the results to Tensorboard.
-
+                writer.add_scalar("train_loss", loss, global_step = step)
                 
                 # TODO:
                 # Compute validation loss and accuracy.
                 # Log the results to Tensorboard.
                 # Don't forget to turn off gradient calculations!
-                evaluate(val_loader, model, loss_fn)
-
+                accuracy, loss = evaluate(val_loader, model, loss_fn)
+                writer.add_scalar("validation_loss", loss, global_step = step)
+                writer.add_scalar("accuracy", accuracy, global_step = step)
+            
+            optimizer.zero_grad()
             step += 1
 
-        print()
+        print("Epoch " , epoch, " Loss ", loss)
 
 
 def compute_accuracy(outputs, labels):
@@ -90,4 +100,19 @@ def evaluate(val_loader, model, loss_fn):
 
     TODO!
     """
-    pass
+    correct = 0
+    total = 0
+    model.eval() #put network in eval mode
+    for i, data in enumerate(val_loader): 
+        input_data, labels = data
+        predictions = model.forward(input_data)
+        loss = loss_fn(predictions, labels)
+        predictions = predictions.argmax(axis = 1) #trying to get 32,1: apply to axis 1 which is rows 
+        
+        #print(predictions.shape)
+        total += len(labels)
+        correct += (predictions == labels).sum().item() #boolean check. if true add one false = 0. python magic go brr
+        break
+    
+    accuracy = correct/total
+    return accuracy, loss 
