@@ -12,10 +12,11 @@ class CNNDataset(torch.utils.data.Dataset):
     # imagePath should be a string containing file path to where the data is. 
     # use pillow to get a numpy array image.open
 
-    def __init__(self, imagePath = "data/train.csv", trainProp = 0.8, isTrain = True): #size is #images you want to take
-        df = pd.read_csv(imagePath) 
+    def __init__(self, imageIndexPath = "data/train.csv", imagePath = "data/train_images/", trainProp = 0.8, isTrain = True): #size is #images you want to take
+        df = pd.read_csv(imageIndexPath) 
         df.sample(0) # shuffle w/ seed. each time we take first 80% last 20% so we should randomize beforehand
         numImages = df.shape[0]
+        self.imagePath = imagePath #path to the actual images themselves, not to the csv file listing them
 
         #sklearn.model_selection.train_test_split(df, test_size = testProp, train_size = trainProp, shuffle = True) prob not needed
 
@@ -33,7 +34,7 @@ class CNNDataset(torch.utils.data.Dataset):
     def __getitem__(self, index): #allows you to access with square brackets
         #inputs = torch.zeros([3, 224, 224])
         #cache images potentially? 
-        input = Image.open("data/train_images/" + self.inputImages.iloc[index]) #remove hard code directory
+        input = Image.open(self.imagePath + self.inputImages.iloc[index]) #remove hard code directory
         process = transforms.Compose([
             transforms.Resize((224,224)),
             transforms.ToTensor(),

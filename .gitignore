@@ -4,3 +4,4 @@ __pycache__
 training_summaries/
 data/
 .pandas-practice.ipynb
+model.pt

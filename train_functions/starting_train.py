@@ -5,7 +5,7 @@ import torch.utils.tensorboard
 import tensorboard as tf 
 import datetime 
 
-
+#have a parameter for "how often to log data to TensorBoard"
 def starting_train(
     train_dataset, val_dataset, model, hyperparameters, n_eval, summary_path
 ):
@@ -70,6 +70,7 @@ def starting_train(
                 accuracy, loss = evaluate(val_loader, model, loss_fn)
                 writer.add_scalar("validation_loss", loss, global_step = step)
                 writer.add_scalar("accuracy", accuracy, global_step = step)
+                torch.save(model.state_dict(), './model.pt')
             
             optimizer.zero_grad()
             step += 1
