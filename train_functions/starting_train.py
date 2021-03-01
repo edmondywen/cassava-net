@@ -40,7 +40,11 @@ def starting_train(
     # Initialize summary writer (for logging)
     writer = torch.utils.tensorboard.SummaryWriter(summary_path)
 
+    # Init totals/correct for evaluating train accuracy 
     step = 0
+    correct = 0
+    total = 0
+
     for epoch in range(epochs):
         print(f"Epoch {epoch + 1} of {epochs}")
 
@@ -52,6 +56,11 @@ def starting_train(
             input_data, labels = batch
             predictions = model.forward(input_data)
             loss = loss_fn(predictions, labels)
+            predictions = predictions.argmax(axis = 1) 
+#argmax gives the max value in an axis. softmax has "soft" values (ie a range of probabilities). not 100% sure
+            total += len(labels) #have to add entire batch size
+            correct += (predictions == labels).sum().item()
+            accuracy = correct/total #double check if this is correct 
 
             loss.backward()
             optimizer.step()
@@ -62,14 +71,14 @@ def starting_train(
                 # Compute training loss and accuracy.
                 # Log the results to Tensorboard.
                 writer.add_scalar("train_loss", loss, global_step = step)
-                
+                writer.add_scalar("train_accuracy", accuracy, global_step = step)
                 # TODO:
                 # Compute validation loss and accuracy.
                 # Log the results to Tensorboard.
                 # Don't forget to turn off gradient calculations!
                 accuracy, loss = evaluate(val_loader, model, loss_fn)
                 writer.add_scalar("validation_loss", loss, global_step = step)
-                writer.add_scalar("accuracy", accuracy, global_step = step)
+                writer.add_scalar("validation_accuracy", accuracy, global_step = step)
                 torch.save(model.state_dict(), './model.pt')
             
             optimizer.zero_grad()
