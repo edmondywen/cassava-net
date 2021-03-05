@@ -21,8 +21,8 @@ def main():
     label = f"cassava__{int(time.time())}"
     summary_path = f"{SUMMARIES_PATH}/{label}"
     os.makedirs(summary_path, exist_ok=True)
-
-    #create path for saving summaries
+    model_path = './'
+   
 
     # TODO: Add GPU support. This line of code might be helpful.
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -42,6 +42,7 @@ def main():
         hyperparameters=hyperparameters,
         n_eval=args.n_eval,
         summary_path=summary_path,
+        model_path=model_path
     )
 
 

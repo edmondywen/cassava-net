@@ -7,7 +7,7 @@ import datetime
 
 #have a parameter for "how often to log data to TensorBoard"
 def starting_train(
-    train_dataset, val_dataset, model, hyperparameters, n_eval, summary_path, save_path
+    train_dataset, val_dataset, model, hyperparameters, n_eval, summary_path, model_path
 ):
     """
     Trains and evaluates a model.
@@ -31,7 +31,6 @@ def starting_train(
     val_loader = torch.utils.data.DataLoader(
         val_dataset, batch_size=batch_size, shuffle=True
     )
-
 
     # Initalize optimizer (for gradient descent) and loss function
     optimizer = optim.Adam(model.parameters())
@@ -67,19 +66,18 @@ def starting_train(
 
             # Periodically evaluate our model + log to Tensorboard
             if step % n_eval == 0:
-                # TODO:
                 # Compute training loss and accuracy.
                 # Log the results to Tensorboard.
                 writer.add_scalar("train_loss", loss, global_step = step)
                 writer.add_scalar("train_accuracy", accuracy, global_step = step)
-                # TODO:
+
                 # Compute validation loss and accuracy.
                 # Log the results to Tensorboard.
                 # Don't forget to turn off gradient calculations!
                 accuracy, loss = evaluate(val_loader, model, loss_fn)
                 writer.add_scalar("validation_loss", loss, global_step = step)
                 writer.add_scalar("validation_accuracy", accuracy, global_step = step)
-                torch.save(model.state_dict(), './' + save_path + '/model.pt')
+                torch.save(model.state_dict(), model_path + '/model.pt')
             
             optimizer.zero_grad()
             step += 1
